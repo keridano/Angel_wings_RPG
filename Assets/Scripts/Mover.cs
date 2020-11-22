@@ -3,12 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Mover : MonoBehaviour {
-    [SerializeField] Transform target;
+public class Mover : MonoBehaviour 
+{
+    Ray lastRay;
 
-    // Update is called once per frame
     void Update () 
     {
-        GetComponent<NavMeshAgent> ().destination = target.position;
+        if (Input.GetMouseButtonDown (0)) 
+        {
+            MoveToCursor ();
+        }
+    }
+
+    private void MoveToCursor () 
+    {
+        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //Debug.DrawRay(ray.origin, ray.direction * 100);
+        if(Physics.Raycast (ray, out var hitInfo))
+        {
+            GetComponent<NavMeshAgent> ().destination = hitInfo.point;
+        }
     }
 }
