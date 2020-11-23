@@ -1,26 +1,50 @@
-﻿using UnityEngine;
+﻿using RPG.Core;
+using UnityEngine;
 using UnityEngine.AI;
 
 namespace RPG.Movement
 {
-    public class Mover : MonoBehaviour
+    public class Mover : MonoBehaviour, IAction
     {
+        private NavMeshAgent _navMeshAgent;
+        private ActionScheduler _actionScheduler;
+        private Animator _animator;
+        
+        void Start() 
+        {
+            _navMeshAgent = GetComponent<NavMeshAgent>();
+            _actionScheduler = GetComponent<ActionScheduler>();
+            _animator = GetComponent<Animator>();
+        }
+
         void Update()
         {
             UpdateAnimator();
         }
 
+        public void StartMoveAction(Vector3 destination)
+        {
+            _actionScheduler.StartAction(this);
+            MoveTo(destination);
+        }
+
         public void MoveTo(Vector3 destination)
         {
-            GetComponent<NavMeshAgent>().destination = destination;
+            _navMeshAgent.destination = destination;
+            _navMeshAgent.isStopped = false;
+        }
+
+        public void Cancel()
+        {
+            _navMeshAgent.isStopped = true;
         }
 
         private void UpdateAnimator()
         {
-            var velocity = GetComponent<NavMeshAgent>().velocity;
+            var velocity = _navMeshAgent.velocity;
             var localVelocity = transform.InverseTransformDirection(velocity);
             var speed = localVelocity.z;
-            GetComponent<Animator>().SetFloat("forwardSpeed", speed);
+            _animator.SetFloat("forwardSpeed", speed);
         }
     }
 }
