@@ -10,31 +10,30 @@ namespace RPG.Combat
         [SerializeField] float timeBetweenAttacks = 1f;
         [SerializeField] float weaponDamage = 5f;
 
-        private float _timeSinceLastAttack = 0;
+        private float _timeSinceLastAttack = Mathf.Infinity;
         private Health _target;
         private Mover _mover;
         private ActionScheduler _actionScheduler;
         private Animator _animator;
 
-        public void Attack(CombatTarget combatTarget)
-        {
-            _actionScheduler.StartAction(this);
-            _target = combatTarget.GetComponent<Health>();
-        }
-        
         public void Cancel()
         {
             StopAttack();
             _target = null;
         }
 
-
-        public bool CanAttack(CombatTarget combatTarget)
+        public bool CanAttack(GameObject combatTarget)
         {
             if(combatTarget == null) return false;
 
             var targetToTest = combatTarget.GetComponent<Health>();
             return targetToTest != null && !targetToTest.IsDead();
+        }
+
+        public void Attack(GameObject combatTarget)
+        {
+            _actionScheduler.StartAction(this);
+            _target = combatTarget.GetComponent<Health>();
         }
 
         void Start() 

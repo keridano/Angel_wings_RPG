@@ -6,12 +6,14 @@ namespace RPG.Movement
 {
     public class Mover : MonoBehaviour, IAction
     {
+        private Health _health;
         private NavMeshAgent _navMeshAgent;
         private ActionScheduler _actionScheduler;
         private Animator _animator;
         
         void Start() 
         {
+            _health = GetComponent<Health>();
             _navMeshAgent = GetComponent<NavMeshAgent>();
             _actionScheduler = GetComponent<ActionScheduler>();
             _animator = GetComponent<Animator>();
@@ -19,6 +21,7 @@ namespace RPG.Movement
 
         void Update()
         {
+            _navMeshAgent.enabled = !_health.IsDead();
             UpdateAnimator();
         }
 
